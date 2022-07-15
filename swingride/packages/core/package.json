@@ -1,0 +1,16 @@
+{
+  "name": "@swingride/core",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "zod": "3.17.3"
+  },
+  "peerDependencies": {
+    "zod": "*"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@swingride/serve-psotpath-express",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@swingride/core": "workspace:*",
+    "@swingride/util-postpath": "workspace:*",
+    "@types/express": "4.17.13",
+    "@types/ws": "8.5.3",
+    "express": "4.18.1",
+    "ws": "8.8.1"
+  },
+  "peerDependencies": {
+    "@swingride/core": "*",
+    "@swingride/util-postpath": "*",
+    "ws": "*"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@lumastack/react-async-ex-browser",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "devDependencies": {
+    "@types/react": "^18.0.9",
+    "react": "18.1.0",
+    "@lumastack/react-async": "workspace:*",
+    "@lumastack/react-async-ex": "workspace:*"
+  },
+  "dependencies": {
+    "@lumastack/react-async": "*",
+    "@lumastack/react-async-ex": "*"
+  },
+  "peerDependencies": {
+    "react": "*"
+  }
+}

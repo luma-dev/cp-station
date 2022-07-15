@@ -1,0 +1,37 @@
+{
+  "name": "@cp-station/workspace",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter=\"./ui\" run dev",
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint \"**/*.{js,cjs,mjs,ts,tsx,json}\"",
+    "lint:prettier": "prettier \"**/*.html\" --list-different",
+    "lint-quiet": "run-s lint-quiet:*",
+    "lint-quiet:eslint": "pnpm run lint:eslint --quiet",
+    "lint-quiet:prettier": "prettier \"**/*.html\" --check --loglevel error",
+    "lint-fix": "run-s lint-fix:*",
+    "lint-fix:eslint": "pnpm run lint:eslint --fix",
+    "lint-fix:prettier": "prettier \"**/*.html\" --write",
+    "build:swingride": "pnpm --parallel --filter=\"./swingride/packages/*\" run build",
+    "dev:swingride": "pnpm --parallel --filter=\"./swingride/packages/*\" run dev",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@luma-dev/eslint-config-base": "^0.14.0",
+    "@luma-dev/eslint-config-react": "^0.6.0",
+    "@luma-dev/prettier-config": "^0.1.0",
+    "eslint": "^8.19.0",
+    "eslint-import-resolver-typescript": "3.2.6",
+    "npm-run-all": "4.1.5",
+    "prettier": "2.7.1",
+    "prettier-plugin-organize-imports": "3.0.0",
+    "typescript": "~4.6.3",
+    "vitest": "0.18.0"
+  },
+  "engines": {
+    "npm": "use pnpm",
+    "pnpm": "^7",
+    "yarn": "use pnpm"
+  }
+}

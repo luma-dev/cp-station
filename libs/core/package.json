@@ -1,0 +1,12 @@
+{
+  "name": "@cp-station/core",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "peerDependencies": {
+    "zod": "*"
+  },
+  "devDependencies": {
+    "zod": "3.17.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@swingride/util-postpath",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@swingride/core": "workspace:*",
+    "@types/node": "18.0.3"
+  },
+  "peerDependencies": {
+    "@swingride/core": "*"
+  }
+}

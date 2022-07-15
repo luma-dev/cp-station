@@ -1,0 +1,23 @@
+{
+  "name": "@swingride/client-postpath-react",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@swingride/client-postpath": "workspace:*",
+    "@swingride/core": "workspace:*",
+    "@swingride/util-postpath": "workspace:*",
+    "@types/react": "^18.0.9",
+    "react": "18.1.0"
+  },
+  "peerDependencies": {
+    "@swingride/client-postpath": "*",
+    "@swingride/core": "*",
+    "@swingride/util-postpath": "*",
+    "react": "*"
+  }
+}
