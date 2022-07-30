@@ -1,0 +1,10 @@
+{
+  "name": "@cp-station/template-spec-impl",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "js-base64": "3.7.2",
+    "@cp-station/template-spec-gen": "workspace:*"
+  }
+}

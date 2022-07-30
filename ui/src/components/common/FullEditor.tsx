@@ -8,7 +8,7 @@ const FullEditor: FC<Props> = (props) => {
   const ref = useRef<MonacoEditor>();
   useEffect(() => {
     const handler = () => {
-      if (!ref.current) return;
+      if (ref.current == null || ref.current.editor == null) return;
       ref.current.editor.layout();
     };
     handler();
@@ -20,6 +20,6 @@ const FullEditor: FC<Props> = (props) => {
     };
   }, []);
 
-  return <MonacoEditor {...props} ref={ref} width="100%" />;
+  return <MonacoEditor {...props} ref={ref as any} width="100%" />;
 };
 export default FullEditor;

@@ -1,8 +1,10 @@
-import { createRouter } from '@swingride/core';
+import { implRouter } from '@swingride/core';
+import folders from './folders';
 import templates_providers from './templates_providers';
 
-export default createRouter({
+export default implRouter({
   $: {
     templates_providers,
+    folders,
   },
 });

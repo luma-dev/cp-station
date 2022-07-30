@@ -1,4 +1,4 @@
-import type { Router } from '@swingride/core';
+import type { ImplRouter } from '@swingride/core';
 import { hasSubroutes, isQueryRouter, isSubscriptionRouter } from '@swingride/core';
 import * as fs from 'node:fs';
 import { printNode, zodToTs } from 'zod-to-ts';
@@ -8,14 +8,14 @@ const isZodVoid = (zod: any) => {
 };
 
 export type TransformRoutesCodeParams = {
-  router: Router;
+  router: ImplRouter;
 };
 export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
-  const innerType = (router: Router, segments: string[]): string => {
-    const subs = hasSubroutes(router)
+  const innerType = (router: ImplRouter, segments: string[]): string => {
+    const $ = hasSubroutes(router)
       ? [
           '$:{',
-          Object.entries(router.subs)
+          Object.entries(router.$)
             .map(([key, sub]) => `${JSON.stringify(key)}:${innerType(sub, [...segments, key])}`)
             .join(';'),
           '}',
@@ -31,8 +31,8 @@ export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
             [
               '[s:symbol]:{',
               [
-                ['params:', printNode(zodToTs(router.query.paramsSchema).node)].join(''),
-                ['returnValue:', printNode(zodToTs(router.query.returnSchema).node)].join(''),
+                ['params:', printNode(zodToTs(router.$query.paramsSchema).node)].join(''),
+                ['returnValue:', printNode(zodToTs(router.$query.returnSchema).node)].join(''),
               ].join(';'),
               '}',
             ].join(''),
@@ -51,22 +51,22 @@ export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
             [
               '[s:symbol]:{',
               [
-                ['params:', printNode(zodToTs(router.subscription.paramsSchema).node)].join(''),
-                ['yieldValue:', printNode(zodToTs(router.subscription.yieldSchema).node)].join(''),
-                ['returnValue:', printNode(zodToTs(router.subscription.returnSchema).node)].join(''),
+                ['params:', printNode(zodToTs(router.$subscription.paramsSchema).node)].join(''),
+                ['yieldValue:', printNode(zodToTs(router.$subscription.yieldSchema).node)].join(''),
+                ['returnValue:', printNode(zodToTs(router.$subscription.returnSchema).node)].join(''),
               ].join(';'),
             ].join(''),
           ].join(';'),
           '}}',
         ].join('')
       : '';
-    return `{${[subs, $query, $subscription].filter((e) => e).join(';')}}`;
+    return `{${[$, $query, $subscription].filter((e) => e).join(';')}}`;
   };
-  const innerVar = (router: Router, segments: string[]): any => {
-    const subs = hasSubroutes(router)
+  const innerVar = (router: ImplRouter, segments: string[]): any => {
+    const $ = hasSubroutes(router)
       ? [
           '$',
-          Object.fromEntries(Object.entries(router.subs).map(([key, sub]) => [key, innerVar(sub, [...segments, key])])),
+          Object.fromEntries(Object.entries(router.$).map(([key, sub]) => [key, innerVar(sub, [...segments, key])])),
         ]
       : [];
     const $query = isQueryRouter(router)
@@ -74,8 +74,8 @@ export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
           '$query',
           {
             segments,
-            isParamsVoid: isZodVoid(router.query.paramsSchema),
-            isReturnVoid: isZodVoid(router.query.returnSchema),
+            isParamsVoid: isZodVoid(router.$query.paramsSchema),
+            isReturnVoid: isZodVoid(router.$query.returnSchema),
           },
         ]
       : [];
@@ -84,13 +84,13 @@ export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
           '$subscription',
           {
             segments,
-            isParamsVoid: isZodVoid(router.subscription.paramsSchema),
-            isYieldVoid: isZodVoid(router.subscription.yieldSchema),
-            isReturnVoid: isZodVoid(router.subscription.returnSchema),
+            isParamsVoid: isZodVoid(router.$subscription.paramsSchema),
+            isYieldVoid: isZodVoid(router.$subscription.yieldSchema),
+            isReturnVoid: isZodVoid(router.$subscription.returnSchema),
           },
         ]
       : [];
-    return Object.fromEntries([subs, $query, $subscription]);
+    return Object.fromEntries([$, $query, $subscription]);
   };
   return [
     `export type Routes=${innerType(params.router, [])};`,
@@ -99,7 +99,7 @@ export const transformRoutesCode = (params: TransformRoutesCodeParams) => {
 };
 
 export type GenerateRoutesCodeParams = {
-  router: Router;
+  router: ImplRouter;
   outputPath: string;
 };
 export const generateRoutesCode = (params: GenerateRoutesCodeParams) => {

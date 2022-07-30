@@ -1,0 +1,5 @@
+#!/bin/sh
+
+SCRIPT_DIR="$(realpath "$(dirname "$0")")"
+ROOT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
+"$ROOT_DIR/node_modules/.bin/ts-node" "$SCRIPT_DIR/controller/index.ts"

@@ -1,4 +1,4 @@
-import type { Router } from '@swingride/core';
+import type { ImplRouter } from '@swingride/core';
 import { isQueryRouter, isSubscriptionRouter, matchRouter, resolve, withContextAny } from '@swingride/core';
 import { parseUrlAsPostpath } from '@swingride/util-postpath';
 import type { RequestHandler } from 'express';
@@ -11,7 +11,7 @@ const isZodVoid = (zod: any) => {
 };
 
 export type ShouldHandleUpgradeParams = {
-  router: Router;
+  router: ImplRouter;
   request: IncomingMessage;
   pathPrefix?: string | undefined;
 };
@@ -24,7 +24,7 @@ export const shouldHandleUpgrade = (params: ShouldHandleUpgradeParams) => {
 };
 
 export type ExpressMiddlewareParams = {
-  router: Router;
+  router: ImplRouter;
   context?: unknown;
   getBodyJson?: (req: Parameters<RequestHandler>[0], res: Parameters<RequestHandler>[1]) => unknown;
 };
@@ -49,9 +49,9 @@ export const constructExpressMiddlewareByRouter = ({
         return;
       }
       if (isQueryRouter(found)) {
-        const params = isZodVoid(found.query.paramsSchema)
+        const params = isZodVoid(found.$query.paramsSchema)
           ? undefined
-          : found.query.paramsSchema.parse(getBodyJson(req, res));
+          : found.$query.paramsSchema.parse(getBodyJson(req, res));
 
         const contextKey = Symbol('Context Key');
         withContextAny({
@@ -59,7 +59,8 @@ export const constructExpressMiddlewareByRouter = ({
           context,
           async fn() {
             const returnValue = await resolve({
-              query: found.query,
+              segments,
+              query: found.$query,
               params,
               metadata: contextKey,
             });
@@ -77,7 +78,7 @@ export const constructExpressMiddlewareByRouter = ({
 };
 
 export type ConstructNoServerWebSocketServer = {
-  router: Router;
+  router: ImplRouter;
   server?: HTTPServer | HTTPSServer | undefined;
   pathPrefix?: string | undefined;
 };

@@ -1,0 +1,12 @@
+{
+  "name": "@cp-station/template-spec",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "zod": "3.17.3",
+    "zod-to-ts": "1.1.1",
+    "@cp-station/template-spec-gen": "workspace:*",
+    "@cp-station/core": "workspace:*"
+  }
+}

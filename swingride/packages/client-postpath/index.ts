@@ -2,13 +2,11 @@ import type { QueryRouteClientData, SubscriptionRouteClientData } from '@swingri
 
 type CancelSubscription = () => void;
 
-export type PostpathClientQueryParams<Params, Return> = {
-  query: QueryRouteClientData<Params, Return>;
-  signal?: AbortSignal;
-} & (Params extends void ? unknown : { params: Params });
 export type PostpathClientQuery = <Params, Return>(
-  params: PostpathClientQueryParams<Params, Return>,
-) => Promise<Return>;
+  queryRouteClientData: QueryRouteClientData<Params, Return>,
+) => Params extends void
+  ? (signal?: AbortSignal) => Promise<Return>
+  : (params: Params, signal?: AbortSignal) => Promise<Return>;
 export type PostpathClientSubscribe = <Params, Yield, Return>(
   params: {
     subscription: SubscriptionRouteClientData<Params, Yield, Return>;
@@ -42,11 +40,8 @@ export const createPostpathClient = ({
   httpBasePath,
   debug,
 }: CreatePostpathClientParams): PostpathClient => {
-  const query = async ({
-    query,
-    params,
-    signal,
-  }: Omit<PostpathClientQueryParams<any, any>, 'params'> & { params: any }) => {
+  const query = (query: QueryRouteClientData<any, any>) => async (arg0: any, arg1: any) => {
+    const [signal, params]: [AbortSignal, any] = (query.isParamsVoid ? [arg0] : [arg1, arg0]) as any;
     if (httpBasePath == null) throw new Error('HTTP base path not configured');
     if (debug?.delayBeforeSendMs) {
       await delay(debug.delayBeforeSendMs);

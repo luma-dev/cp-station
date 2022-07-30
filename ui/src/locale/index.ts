@@ -13,6 +13,8 @@ type Vocabulary = {
   'ui/common/save': Message;
   'ui/common/delete': Message;
   'ui/common/create from this template': Message;
+  'ui/common/create': Message;
+  'ui/common/default': Message;
 };
 
 const catalogEn = new Catalog<Vocabulary>({
@@ -27,6 +29,8 @@ const catalogEn = new Catalog<Vocabulary>({
   'ui/common/save': msg('save'),
   'ui/common/delete': msg('delete'),
   'ui/common/create from this template': msg('create from this template'),
+  'ui/common/create': msg('create'),
+  'ui/common/default': msg('default'),
 });
 
 const catalogJa = new Catalog<Vocabulary>({
@@ -41,6 +45,8 @@ const catalogJa = new Catalog<Vocabulary>({
   'ui/common/save': msg('保存'),
   'ui/common/delete': msg('削除'),
   'ui/common/create from this template': msg('このテンプレートから生成'),
+  'ui/common/create': msg('作成'),
+  'ui/common/default': msg('デフォルト'),
 });
 
 export const book = new Book<Vocabulary>({ en: catalogEn, ja: catalogJa });

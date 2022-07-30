@@ -15,7 +15,7 @@ const postpathClient = createPostpathClient({
   httpBasePath: 'http://space:8052',
   debug: {
     printErrorInConsole: true,
-    delayBeforeSendMs: 400,
+    // delayBeforeSendMs: 400,
   },
 });
 

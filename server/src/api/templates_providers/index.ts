@@ -1,71 +1,21 @@
-import { templateProviderConfigSchema, templateProviderSchema } from '@cp-station/core';
-import { createQueryRoute, createRouter } from '@swingride/core';
+import type { FolderData } from '@cp-station/core';
+import { templateProviderConfigFileSchema, templateProviderSchema } from '@cp-station/core';
+import { templateCaller } from '@cp-station/template-spec';
+import { validateResultSchema } from '@cp-station/template-spec/template-caller/common';
+import { implQueryRoute, implRouter } from '@swingride/core';
+import cuid from 'cuid';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { z } from 'zod';
+import { getContext } from '../context';
 
 const configDir = path.resolve(os.homedir(), '.config/cp-station');
 const jsonPath = path.resolve(configDir, 'template-providers.json');
 
-const isDir = async (p: string): Promise<boolean> => {
-  try {
-    const s = await fs.promises.stat(p);
-    return s.isDirectory();
-  } catch {
-    return false;
-  }
-};
-
-const isFile = async (p: string): Promise<boolean> => {
-  try {
-    await fs.promises.access(p, fs.constants.R_OK);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const isExecutable = async (p: string): Promise<boolean> => {
-  try {
-    await fs.promises.access(p, fs.constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const isTemplateDirStructure = async (p: string): Promise<boolean> => {
-  return (
-    (await isDir(p)) &&
-    (await isDir(path.resolve(p, 'instances'))) &&
-    (await isExecutable(path.resolve(p, '.cp-template')))
-  );
-};
-
-const checkIsDirectory = createRouter({
-  $query: createQueryRoute({
-    paramsSchema: z.string(),
-    returnSchema: z.boolean(),
-    async resolve({ params: p }) {
-      return await isDir(p);
-    },
-  }),
-});
-
-const checkIsTemplateDirStructure = createRouter({
-  $query: createQueryRoute({
-    paramsSchema: z.string(),
-    returnSchema: z.boolean(),
-    async resolve({ params: p }) {
-      return await isTemplateDirStructure(p);
-    },
-  }),
-});
-
-const set = createRouter({
-  $query: createQueryRoute({
-    paramsSchema: templateProviderConfigSchema,
+const set = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: templateProviderConfigFileSchema,
     returnSchema: z.void(),
     async resolve({ params: config }) {
       const json = JSON.stringify(config);
@@ -75,14 +25,14 @@ const set = createRouter({
   }),
 });
 
-const get = createRouter({
-  $query: createQueryRoute({
+const get = implRouter({
+  $query: implQueryRoute({
     paramsSchema: z.void(),
-    returnSchema: templateProviderConfigSchema,
+    returnSchema: templateProviderConfigFileSchema,
     async resolve() {
       const config = await (async () => {
         try {
-          return templateProviderConfigSchema.parse(JSON.parse((await fs.promises.readFile(jsonPath)).toString()));
+          return templateProviderConfigFileSchema.parse(JSON.parse((await fs.promises.readFile(jsonPath)).toString()));
         } catch {
           return [];
         }
@@ -92,37 +42,70 @@ const get = createRouter({
   }),
 });
 
-const listInstances = createRouter({
-  $query: createQueryRoute({
+const listInstances = implRouter({
+  $query: implQueryRoute({
     paramsSchema: templateProviderSchema,
     returnSchema: z.union([z.null(), z.array(z.string())]),
     async resolve({ params }) {
-      const p = params.path;
-      if (!(await isTemplateDirStructure(p))) return null;
-      const names = await fs.promises.readdir(path.resolve(p, 'instances'), { withFileTypes: true });
-      return names.filter((n) => n.isDirectory).map((n) => n.name);
+      const caller = await templateCaller.createLocalTemplateCaller({ provider: params });
+      return await caller.listInstances();
     },
   }),
 });
 
-const generate = createRouter({
-  $query: createQueryRoute({
+const validate = implRouter({
+  $query: implQueryRoute({
     paramsSchema: templateProviderSchema,
-    returnSchema: z.void(),
+    returnSchema: validateResultSchema,
     async resolve({ params }) {
-      params.path;
+      const caller = await templateCaller.createLocalTemplateCaller({ provider: params });
+      return await caller.validate();
     },
   }),
 });
 
-export default createRouter({
+const getDefaultInstance = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: templateProviderSchema,
+    returnSchema: z.string(),
+    async resolve({ params }) {
+      const caller = await templateCaller.createLocalTemplateCaller({ provider: params });
+      return await caller.getDefaultInstance();
+    },
+  }),
+});
+
+const setup = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: z.object({
+      templateProvider: templateProviderSchema,
+      instance: z.string(),
+    }),
+    returnSchema: z.void(),
+    async resolve({ params, metadata }) {
+      const { workdir } = getContext(metadata);
+      const caller = await templateCaller.createLocalTemplateCaller({ provider: params.templateProvider });
+      const to = path.resolve(workdir, cuid());
+      await caller.copyFromInstance({
+        instance: params.instance,
+        absPathCopyTo: to,
+      });
+      const cpTemplateDataPath = path.resolve(to, 'cp-station.data.json');
+      const folderData: FolderData = {
+        templateProvider: params.templateProvider,
+      };
+      await fs.promises.writeFile(cpTemplateDataPath, JSON.stringify(folderData));
+    },
+  }),
+});
+
+export default implRouter({
   $: {
-    checkIsDirectory,
-    checkIsTemplateDirStructure,
     get,
     set,
-
+    validate,
     listInstances,
-    generate,
+    getDefaultInstance,
+    setup,
   },
 });

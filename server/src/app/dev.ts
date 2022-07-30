@@ -1,3 +1,4 @@
+import { codegen, templateTypes } from '@cp-station/template-spec';
 import { generateRoutesCode } from '@swingride/codegen-routes';
 import {
   constructExpressMiddlewareByRouter,
@@ -16,6 +17,10 @@ async function main() {
   generateRoutesCode({
     router,
     outputPath: path.resolve(__dirname, '../../../libs/routes-gen/routes.gen.ts'),
+  });
+  codegen.generateTemplateTypesCode({
+    templateTypes,
+    outputPath: path.resolve(__dirname, '../../../libs/template-spec-gen/template-spec.gen.ts'),
   });
 
   const app = express();
@@ -48,6 +53,9 @@ async function main() {
   app.use(
     constructExpressMiddlewareByRouter({
       router,
+      context: {
+        workdir: '/home/luma/cp-work', // TODO
+      },
     }),
   );
 

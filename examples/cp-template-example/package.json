@@ -1,0 +1,12 @@
+{
+  "name": "@cp-station/cp-template-example",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "@cp-station/template-spec-impl": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "18.0.3"
+  }
+}

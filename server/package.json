@@ -8,12 +8,14 @@
   },
   "dependencies": {
     "@cp-station/core": "workspace:*",
+    "@cp-station/template-spec": "workspace:*",
     "@swingride/codegen-routes": "workspace:*",
     "@swingride/core": "workspace:*",
     "@swingride/serve-psotpath-express": "workspace:*",
     "@swingride/util-postpath": "workspace:*",
     "body-parser": "1.20.0",
     "cors": "2.8.5",
+    "cuid": "2.1.8",
     "express": "4.18.1",
     "ws": "8.8.1",
     "zod": "3.17.3"

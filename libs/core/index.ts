@@ -3,18 +3,27 @@ import { z } from 'zod';
 export const providerTypeSchema = z.literal('local');
 export type ProviderType = z.infer<typeof providerTypeSchema>;
 
-export const templateProviderCommonSchema = {
-  name: z.string(),
-} as const;
-
 export const localTemplateProviderSchema = z.object({
-  ...templateProviderCommonSchema,
   type: providerTypeSchema,
-  path: z.string(),
+  templatePath: z.string(),
 });
+export type LocalTemplateProvider = z.infer<typeof localTemplateProviderSchema>;
 
 export const templateProviderSchema = localTemplateProviderSchema;
 export type TemplateProvider = z.infer<typeof templateProviderSchema>;
 
-export const templateProviderConfigSchema = z.array(templateProviderSchema);
+export const templateProviderConfigSchema = z.object({
+  name: z.string(),
+  provider: templateProviderSchema,
+});
 export type TemplateProviderConfig = z.infer<typeof templateProviderConfigSchema>;
+
+export const templateProviderConfigFileSchema = z.array(templateProviderConfigSchema);
+export type TemplateProviderConfigFile = z.infer<typeof templateProviderConfigFileSchema>;
+
+//
+export const folderDataSchema = z.object({
+  templateProvider: templateProviderSchema,
+  name: z.string().optional(),
+});
+export type FolderData = z.infer<typeof folderDataSchema>;
