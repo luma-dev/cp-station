@@ -1,4 +1,3 @@
-import type { FolderData } from '@cp-station/core';
 import { templateProviderConfigFileSchema, templateProviderSchema } from '@cp-station/core';
 import { templateCaller } from '@cp-station/template-spec';
 import { validateResultSchema } from '@cp-station/template-spec/template-caller/common';
@@ -83,18 +82,25 @@ const setup = implRouter({
     }),
     returnSchema: z.void(),
     async resolve({ params, metadata }) {
-      const { workdir } = getContext(metadata);
+      const {
+        workdir,
+        folder: { writeData },
+      } = getContext(metadata);
       const caller = await templateCaller.createLocalTemplateCaller({ provider: params.templateProvider });
-      const to = path.resolve(workdir, cuid());
+      const folderId = cuid();
+      const folderName = folderId;
+      const to = path.resolve(workdir, folderName);
       await caller.copyFromInstance({
         instance: params.instance,
         absPathCopyTo: to,
       });
-      const cpTemplateDataPath = path.resolve(to, 'cp-station.data.json');
-      const folderData: FolderData = {
-        templateProvider: params.templateProvider,
-      };
-      await fs.promises.writeFile(cpTemplateDataPath, JSON.stringify(folderData));
+      await writeData({
+        folderSpecifier: { folderName },
+        folderData: {
+          folderId,
+          templateProvider: params.templateProvider,
+        },
+      });
     },
   }),
 });

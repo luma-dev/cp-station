@@ -1,50 +1,59 @@
-import { folderDataSchema } from '@cp-station/core';
+import { folderEntrySchema, folderSpecifierSchema } from '@cp-station/core';
 import { implQueryRoute, implRouter } from '@swingride/core';
-import fs from 'node:fs';
-import path from 'node:path';
 import { z } from 'zod';
 import { getContext } from '../context';
 
 const list = implRouter({
   $query: implQueryRoute({
     paramsSchema: z.void(),
-    returnSchema: z.array(
-      z.object({
-        dirname: z.string(),
-        data: folderDataSchema,
-      }),
-    ),
+    returnSchema: z.array(folderEntrySchema),
     async resolve({ metadata }) {
-      const { workdir } = getContext(metadata);
-      const dir = await fs.promises.readdir(workdir, { encoding: 'utf8', withFileTypes: true });
-      return (
-        await Promise.all(
-          dir
-            .filter((e) => e.isDirectory)
-            .map(async (e) => {
-              const data = folderDataSchema.parse(
-                JSON.parse(
-                  await fs.promises.readFile(path.resolve(workdir, e.name, 'cp-station.data.json'), {
-                    encoding: 'utf8',
-                  }),
-                ),
-              );
-              return [
-                {
-                  dirname: e.name,
-                  data,
-                },
-              ];
-            })
-            .map((e) =>
-              e.catch((e) => {
-                // eslint-disable-next-line no-console
-                console.error(e);
-                return [];
-              }),
-            ),
-        )
-      ).flat();
+      const {
+        folder: { listFolders },
+      } = getContext(metadata);
+      return await listFolders();
+    },
+  }),
+});
+
+const getById = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: folderSpecifierSchema,
+    returnSchema: folderEntrySchema.nullable(),
+    async resolve({ metadata, params: folderSpecifier }) {
+      const {
+        folder: { getFolder },
+      } = getContext(metadata);
+      return (await getFolder(folderSpecifier)) ?? null;
+    },
+  }),
+});
+
+const getBundledCode = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: folderSpecifierSchema,
+    returnSchema: z.string(),
+    async resolve({ metadata, params: folderSpecifier }) {
+      const {
+        folder: { getBundledCode },
+      } = getContext(metadata);
+      return await getBundledCode(folderSpecifier);
+    },
+  }),
+});
+
+const setFolderName = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: z.object({
+      folderSpecifier: folderSpecifierSchema,
+      newFolderName: z.string(),
+    }),
+    returnSchema: z.void(),
+    async resolve({ metadata, params }) {
+      const {
+        folder: { setFolderName },
+      } = getContext(metadata);
+      return await setFolderName(params);
     },
   }),
 });
@@ -52,5 +61,8 @@ const list = implRouter({
 export default implRouter({
   $: {
     list,
+    getById,
+    getBundledCode,
+    setFolderName,
   },
 });

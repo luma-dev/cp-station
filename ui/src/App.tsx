@@ -7,10 +7,18 @@ import { PostpathClientProvider } from '@swingride/client-postpath-react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Overview from './apps/folder/:folderId/overview/page';
+import Folder from './apps/folder/:folderId/page';
 import NewFolder from './apps/new-folder/page';
 import Root from './apps/page';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: 'always',
+    },
+  },
+});
 const postpathClient = createPostpathClient({
   httpBasePath: 'http://space:8052',
   debug: {
@@ -79,7 +87,10 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Root />}>
                     <Route index />
-                    <Route path="/new-folder" element={<NewFolder />} />
+                    <Route path="new-folder" element={<NewFolder />} />
+                    <Route path="folder/:folderId" element={<Folder />}>
+                      <Route path="overview" element={<Overview />} />
+                    </Route>
                   </Route>
                 </Routes>
               </BrowserRouter>

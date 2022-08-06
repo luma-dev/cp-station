@@ -11,7 +11,7 @@ registerLocalTemplate({
     const mainPath = path.resolve(absPathCopiedTo, 'main.js');
     const bundledPath = path.resolve(absPathCopiedTo, 'bundled.js');
     const mainContent = fs.readFileSync(mainPath, 'utf-8');
-    const bundledContent = `const printer=(...args)=>{console.log(args)};${mainContent}`;
+    const bundledContent = `const print=(...args)=>{console.log(args)};\n${mainContent}`;
     fs.writeFileSync(bundledPath, bundledContent);
     return {
       bundledFileAbsPath: bundledPath,

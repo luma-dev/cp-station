@@ -1,3 +1,4 @@
+import type { BundleResult } from '@cp-station/core';
 import type child_process from 'node:child_process';
 import { z } from 'zod';
 
@@ -29,7 +30,7 @@ export type TemplateCaller = {
   listInstances: () => Promise<string[]>;
   getDefaultInstance: () => Promise<string>;
   copyFromInstance: (params: CopyFromInstanceParams) => Promise<void>;
-  ensureBundled: (params: CommonAfterCopied) => Promise<void>;
+  ensureBundled: (params: CommonAfterCopied) => Promise<BundleResult>;
   runBundled: (params: CommonAfterCopied) => Promise<child_process.ChildProcessWithoutNullStreams>;
 };
 

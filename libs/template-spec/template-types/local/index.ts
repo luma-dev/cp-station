@@ -1,3 +1,4 @@
+import { bundleResultSchema } from '@cp-station/core';
 import { z } from 'zod';
 import { defineCommand } from '../../util';
 
@@ -25,20 +26,7 @@ export const ensureBundled = defineCommand({
     ...commonReq,
     ...commonReqAfterCopied,
   }),
-  returnSchema: z.intersection(
-    z.object({
-      stdoutEncoded: z.string(),
-      stderrEncoded: z.string(),
-    }),
-    z.union([
-      z.object({
-        bundledFileAbsPath: z.string(),
-      }),
-      z.object({
-        bundledFileContent: z.string(),
-      }),
-    ]),
-  ),
+  returnSchema: bundleResultSchema,
 });
 
 export const getBundledRunner = defineCommand({

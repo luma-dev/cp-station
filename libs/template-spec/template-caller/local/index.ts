@@ -132,7 +132,7 @@ export const createLocalTemplateCaller = async ({
       });
     },
     async ensureBundled({ absPathCopiedTo }) {
-      await invokeEntrypoint('ensureBundled')({
+      return await invokeEntrypoint('ensureBundled')({
         entrypointPath,
         params: {
           absPathCopiedTo,

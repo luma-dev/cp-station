@@ -13,7 +13,7 @@ export type UseAsyncResult<Value> = {
    */
   data: Value | undefined;
   error: unknown;
-  run: () => void;
+  run: () => Promise<Value>;
   abort: () => void;
 };
 export const useAsync = <Value>(
@@ -24,7 +24,7 @@ export const useAsync = <Value>(
   const [data, setData] = useState<Value | undefined>(undefined);
   const [error, setError] = useState<unknown>(undefined);
   const [controller, setController] = useState<AbortController | null>(null);
-  const run = useCallback(() => {
+  const run = useCallback(async () => {
     // transition to "fetching"
     setState('fetching');
     setError(undefined);
@@ -42,23 +42,22 @@ export const useAsync = <Value>(
     };
     newController.signal.addEventListener('abort', abortHandler);
 
-    Promise.resolve((fn as any)(newController.signal))
-      .then((value) => {
-        // transition to "success"
-        if (abortedThisCall) return;
-        setState('success');
-        onSuccess?.(value);
-        setData(value);
-        newController.signal.removeEventListener('abort', abortHandler);
-      })
-      .catch((e) => {
-        // transition to "error"
-        if (abortedThisCall) return;
-        setState('error');
-        onError?.(e);
-        setError(e);
-        newController.signal.removeEventListener('abort', abortHandler);
-      });
+    try {
+      const value = await Promise.resolve((fn as any)(newController.signal));
+      // transition to "success"
+      setState('success');
+      onSuccess?.(value);
+      setData(value);
+      newController.signal.removeEventListener('abort', abortHandler);
+      return value;
+    } catch (e: unknown) {
+      if (abortedThisCall) return;
+      // transition to "error"
+      setState('error');
+      onError?.(e);
+      setError(e);
+      newController.signal.removeEventListener('abort', abortHandler);
+    }
   }, [controller, fn, onError, onSuccess, state]);
   const runRef = useRef(run);
   useEffect(() => {
@@ -78,7 +77,7 @@ export const useAsync = <Value>(
   // auto run
   useEffect(() => {
     if (runDeps != null) {
-      runRef.current();
+      void runRef.current();
     }
   }, [runDeps != null, ...(runDeps ?? [])]);
   /* eslint-enable react-hooks/exhaustive-deps */

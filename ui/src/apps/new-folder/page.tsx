@@ -67,7 +67,7 @@ const NewFolder: FC = () => {
     {
       fn: (signal) => client.query(getConfigQuery)(signal),
       onSuccess: (c) => {
-        // WHY-REF: for change(false => true) with focusing.
+        // WHY-REF: for change(false => true) when just focusing.
         if (!changedRef.current) setNewConfig(c);
       },
     },
@@ -96,7 +96,7 @@ const NewFolder: FC = () => {
       }
     },
     onSuccess() {
-      getConfigRef.current.run();
+      void getConfigRef.current.run();
     },
   });
   const changed = useMemo(() => {
@@ -126,7 +126,7 @@ const NewFolder: FC = () => {
     setIndex((newConfig || []).length);
   };
   const handleSave = () => {
-    setConfig.run();
+    void setConfig.run();
   };
 
   const templateEdit = selected && (

@@ -4,7 +4,7 @@ type CancelSubscription = () => void;
 
 export type PostpathClientQuery = <Params, Return>(
   queryRouteClientData: QueryRouteClientData<Params, Return>,
-) => Params extends void
+) => void extends Params
   ? (signal?: AbortSignal) => Promise<Return>
   : (params: Params, signal?: AbortSignal) => Promise<Return>;
 export type PostpathClientSubscribe = <Params, Yield, Return>(
@@ -12,7 +12,7 @@ export type PostpathClientSubscribe = <Params, Yield, Return>(
     subscription: SubscriptionRouteClientData<Params, Yield, Return>;
     handleMessage: (message: Yield) => void;
     handleReturn: (returnValue: Return) => void;
-  } & (Params extends void ? unknown : { params: Params }),
+  } & (void extends Params ? unknown : { params: Params }),
 ) => CancelSubscription;
 export type PostpathClient = {
   query: PostpathClientQuery;
@@ -47,28 +47,31 @@ export const createPostpathClient = ({
       await delay(debug.delayBeforeSendMs);
       if (signal?.aborted) throw new Error('Aborted');
     }
-    const res = await fetch(
-      `${httpBasePath}/${query.segments.map((segment: string) => encodeURIComponent(segment)).join('/')}`,
-      {
-        method: 'post',
-        ...(query.isParamsVoid
-          ? {}
-          : {
-              body: JSON.stringify(params),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }),
-        signal,
-      },
-    ).catch((e) => {
+    try {
+      const res = await fetch(
+        `${httpBasePath}/${query.segments.map((segment: string) => encodeURIComponent(segment)).join('/')}`,
+        {
+          method: 'post',
+          ...(query.isParamsVoid
+            ? {}
+            : {
+                body: JSON.stringify(params),
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }),
+          signal,
+        },
+      );
+      if (!res.ok) throw new Error(await res.text());
+      if (signal?.aborted) throw new Error('Aborted after fetch success');
+      if (query.isReturnVoid) return;
+      return (await res.json()) as any;
+    } catch (e: unknown) {
       // eslint-disable-next-line no-console
       if (debug?.printErrorInConsole) console.error(e);
       throw e;
-    });
-    if (signal?.aborted) throw new Error('Aborted after fetch success');
-    if (query.isReturnVoid) return;
-    return (await res.json()) as any;
+    }
   };
   return {
     query: query as any,
@@ -84,6 +87,7 @@ export const createPostpathClient = ({
       });
 
       socket.addEventListener('message', (event) => {
+        // eslint-disable-next-line no-console
         console.log('Message from server ', event.data);
         void handleMessage;
         void handleReturn;

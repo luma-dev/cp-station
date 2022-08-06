@@ -10,6 +10,7 @@ import express from 'express';
 import { createServer } from 'node:http';
 import * as path from 'node:path';
 import router from '../api';
+import { createDefaultContext } from '../api/context/main';
 
 /* eslint-disable no-console */
 async function main() {
@@ -53,9 +54,7 @@ async function main() {
   app.use(
     constructExpressMiddlewareByRouter({
       router,
-      context: {
-        workdir: '/home/luma/cp-work', // TODO
-      },
+      context: createDefaultContext(),
     }),
   );
 

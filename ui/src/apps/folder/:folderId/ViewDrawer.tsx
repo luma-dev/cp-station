@@ -1,3 +1,4 @@
+import { book } from '@cp-station/ui/src/locale';
 import { useI18n } from '@hi18n/react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Box from '@mui/material/Box';
@@ -9,7 +10,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import type { FC } from 'react';
-import { book } from '../locale';
 
 const ViewDrawer: FC = () => {
   const { t } = useI18n(book);
