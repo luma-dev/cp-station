@@ -122,6 +122,7 @@ importers:
       '@types/express': 4.17.13
       '@types/node': 18.0.3
       '@types/ws': 8.5.3
+      async-mutex: 0.3.2
       body-parser: 1.20.0
       cors: 2.8.5
       cuid: 2.1.8
@@ -137,6 +138,7 @@ importers:
       '@swingride/core': link:../swingride/packages/core
       '@swingride/serve-psotpath-express': link:../swingride/packages/serve-postpath-express
       '@swingride/util-postpath': link:../swingride/packages/util-postpath
+      async-mutex: 0.3.2
       body-parser: 1.20.0
       cors: 2.8.5
       cuid: 2.1.8
@@ -1745,6 +1747,12 @@ packages:
     resolution: {integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /async-mutex/0.3.2:
+    resolution: {integrity: sha512-HuTK7E7MT7jZEh1P9GtRW9+aTWiDWWi9InbZ5hjxrnRa39KS4BW04+xLBhYNS2aXhHUIKZSw3gj4Pn1pj+qGAA==}
+    dependencies:
+      tslib: 2.4.0
+    dev: false
 
   /autoprefixer/10.4.7_postcss@8.4.14:
     resolution: {integrity: sha512-ypHju4Y2Oav95SipEcCcI5J7CGPuvz8oat7sUtYj3ClK44bldfvtvcxK6IEK++7rqB7YchDGzweZIBG+SD0ZAA==}

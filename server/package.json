@@ -13,6 +13,7 @@
     "@swingride/core": "workspace:*",
     "@swingride/serve-psotpath-express": "workspace:*",
     "@swingride/util-postpath": "workspace:*",
+    "async-mutex": "0.3.2",
     "body-parser": "1.20.0",
     "cors": "2.8.5",
     "cuid": "2.1.8",

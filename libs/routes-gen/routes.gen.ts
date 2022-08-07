@@ -75,19 +75,19 @@ export type Routes={$:{"templates_providers":{$:{"get":{$query:{segments:string[
         caseData: {
             caseType: "input";
             caseId: string;
-            hash: {
+            hash?: {
                 programMain: string;
                 inMain: string;
-            };
+            } | undefined;
         } | {
             caseType: "interact";
             caseId: string;
-            responderFolderId: string;
-            hash: {
+            responderFolderId?: string | undefined;
+            hash?: {
                 programMain: string;
                 programResnponder: string;
                 inResponder: string;
-            };
+            } | undefined;
         };
     };
 } | {
@@ -102,19 +102,37 @@ export type Routes={$:{"templates_providers":{$:{"get":{$query:{segments:string[
         caseData: {
             caseType: "input";
             caseId: string;
-            hash: {
+            hash?: {
                 programMain: string;
                 inMain: string;
-            };
+            } | undefined;
         } | {
             caseType: "interact";
             caseId: string;
-            responderFolderId: string;
-            hash: {
+            responderFolderId?: string | undefined;
+            hash?: {
                 programMain: string;
                 programResnponder: string;
                 inResponder: string;
-            };
+            } | undefined;
         };
     }[];
-})[]}}}}}}};export const routes={"$":{"templates_providers":{"$":{"get":{"$query":{"segments":["templates_providers","get"],"isParamsVoid":true,"isReturnVoid":false}},"set":{"$query":{"segments":["templates_providers","set"],"isParamsVoid":false,"isReturnVoid":true}},"validate":{"$query":{"segments":["templates_providers","validate"],"isParamsVoid":false,"isReturnVoid":false}},"listInstances":{"$query":{"segments":["templates_providers","listInstances"],"isParamsVoid":false,"isReturnVoid":false}},"getDefaultInstance":{"$query":{"segments":["templates_providers","getDefaultInstance"],"isParamsVoid":false,"isReturnVoid":false}},"setup":{"$query":{"segments":["templates_providers","setup"],"isParamsVoid":false,"isReturnVoid":true}}}},"folders":{"$":{"list":{"$query":{"segments":["folders","list"],"isParamsVoid":true,"isReturnVoid":false}},"getById":{"$query":{"segments":["folders","getById"],"isParamsVoid":false,"isReturnVoid":false}},"getBundledCode":{"$query":{"segments":["folders","getBundledCode"],"isParamsVoid":false,"isReturnVoid":false}},"setFolderName":{"$query":{"segments":["folders","setFolderName"],"isParamsVoid":false,"isReturnVoid":true}}}},"cases":{"$":{"listCases":{"$query":{"segments":["cases","listCases"],"isParamsVoid":false,"isReturnVoid":false}}}}}} as Routes;
+})[]}}};"createCase":{$query:{segments:string[];isParamsVoid:boolean;isReturnVoid:boolean;[s:symbol]:{params:{
+    caseType: "input" | "interact";
+    parentNestId: string | null;
+    folderSpecifier: {
+        folderId: string;
+    } | {
+        folderName: string;
+    };
+};returnValue:{
+    caseId: string;
+    caseName: string;
+}}}};"createNest":{$query:{segments:string[];isParamsVoid:boolean;isReturnVoid:boolean;[s:symbol]:{params:{
+    folderId: string;
+} | {
+    folderName: string;
+};returnValue:{
+    nestId: string;
+    nestName: string;
+}}}}}}}};export const routes={"$":{"templates_providers":{"$":{"get":{"$query":{"segments":["templates_providers","get"],"isParamsVoid":true,"isReturnVoid":false}},"set":{"$query":{"segments":["templates_providers","set"],"isParamsVoid":false,"isReturnVoid":true}},"validate":{"$query":{"segments":["templates_providers","validate"],"isParamsVoid":false,"isReturnVoid":false}},"listInstances":{"$query":{"segments":["templates_providers","listInstances"],"isParamsVoid":false,"isReturnVoid":false}},"getDefaultInstance":{"$query":{"segments":["templates_providers","getDefaultInstance"],"isParamsVoid":false,"isReturnVoid":false}},"setup":{"$query":{"segments":["templates_providers","setup"],"isParamsVoid":false,"isReturnVoid":true}}}},"folders":{"$":{"list":{"$query":{"segments":["folders","list"],"isParamsVoid":true,"isReturnVoid":false}},"getById":{"$query":{"segments":["folders","getById"],"isParamsVoid":false,"isReturnVoid":false}},"getBundledCode":{"$query":{"segments":["folders","getBundledCode"],"isParamsVoid":false,"isReturnVoid":false}},"setFolderName":{"$query":{"segments":["folders","setFolderName"],"isParamsVoid":false,"isReturnVoid":true}}}},"cases":{"$":{"listCases":{"$query":{"segments":["cases","listCases"],"isParamsVoid":false,"isReturnVoid":false}},"createCase":{"$query":{"segments":["cases","createCase"],"isParamsVoid":false,"isReturnVoid":false}},"createNest":{"$query":{"segments":["cases","createNest"],"isParamsVoid":false,"isReturnVoid":false}}}}}} as Routes;

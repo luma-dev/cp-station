@@ -3,22 +3,26 @@ import { z } from 'zod';
 export const inputCaseDataSchema = z.object({
   caseType: z.literal('input'),
   caseId: z.string(),
-  hash: z.object({
-    programMain: z.string(),
-    inMain: z.string(),
-  }),
+  hash: z
+    .object({
+      programMain: z.string(),
+      inMain: z.string(),
+    })
+    .optional(),
 });
 export type InputCaseData = z.infer<typeof inputCaseDataSchema>;
 
 export const interactCaseDataSchema = z.object({
   caseType: z.literal('interact'),
   caseId: z.string(),
-  responderFolderId: z.string(),
-  hash: z.object({
-    programMain: z.string(),
-    programResnponder: z.string(),
-    inResponder: z.string(),
-  }),
+  responderFolderId: z.string().optional(),
+  hash: z
+    .object({
+      programMain: z.string(),
+      programResnponder: z.string(),
+      inResponder: z.string(),
+    })
+    .optional(),
 });
 export type InteractCaseData = z.infer<typeof interactCaseDataSchema>;
 

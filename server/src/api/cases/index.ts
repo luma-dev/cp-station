@@ -1,6 +1,6 @@
 import { caseDataEntriesSchema, folderSpecifierSchema } from '@cp-station/core';
 import { implQueryRoute, implRouter } from '@swingride/core';
-import { getContext } from '../context';
+import { createCaseParamsSchema, createCaseReturnSchema, createNestReturnSchema, getContext } from '../context';
 
 const listCases = implRouter({
   $query: implQueryRoute({
@@ -15,8 +15,36 @@ const listCases = implRouter({
   }),
 });
 
+const createCase = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: createCaseParamsSchema,
+    returnSchema: createCaseReturnSchema,
+    async resolve({ params, metadata }) {
+      const {
+        cases: { createCase },
+      } = getContext(metadata);
+      return await createCase(params);
+    },
+  }),
+});
+
+const createNest = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: folderSpecifierSchema,
+    returnSchema: createNestReturnSchema,
+    async resolve({ params: folderSpecifier, metadata }) {
+      const {
+        cases: { createNest },
+      } = getContext(metadata);
+      return await createNest(folderSpecifier);
+    },
+  }),
+});
+
 export default implRouter({
   $: {
     listCases,
+    createCase,
+    createNest,
   },
 });

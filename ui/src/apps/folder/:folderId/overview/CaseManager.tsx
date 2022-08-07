@@ -18,10 +18,16 @@ import ListSubheader from '@mui/material/ListSubheader';
 import Radio from '@mui/material/Radio';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { usePostpathClient } from '@swingride/client-postpath-react';
 import type { FC } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSet } from 'react-use';
+import { routes } from 'routes-gen';
+import { useFolderId } from '../useFolderId';
 import { useListCases } from '../useListCases';
+
+const createCaseQuery = routes.$.cases.$.createCase.$query;
+const createNestQuery = routes.$.cases.$.createNest.$query;
 
 const CaseEntry: FC<{ caseEntry: CaseDataEntry; indent: number; onSelect?: () => void; selected: boolean }> = ({
   caseEntry,
@@ -63,6 +69,8 @@ const CaseEntry: FC<{ caseEntry: CaseDataEntry; indent: number; onSelect?: () =>
 };
 
 const CaseManager: FC = () => {
+  const client = usePostpathClient();
+  const folderId = useFolderId();
   const addIconStyle = { width: 24, height: 24 };
   const listCases = useListCases();
   const theme = useTheme();
@@ -128,11 +136,29 @@ const CaseManager: FC = () => {
     </ListSubheader>
   );
 
-  const handleCreateInputCase = () => {};
+  const handleCreateInputCase = () => {
+    void client
+      .query(createCaseQuery)({ folderSpecifier: { folderId }, caseType: 'input', parentNestId: selectedNest })
+      .then(() => {
+        return listCases.refetch();
+      });
+  };
 
-  const handleCreateInteractCase = () => {};
+  const handleCreateInteractCase = () => {
+    void client
+      .query(createCaseQuery)({ folderSpecifier: { folderId }, caseType: 'interact', parentNestId: selectedNest })
+      .then(() => {
+        return listCases.refetch();
+      });
+  };
 
-  const handleCreateNest = () => {};
+  const handleCreateNest = () => {
+    void client
+      .query(createNestQuery)({ folderId })
+      .then(() => {
+        return listCases.refetch();
+      });
+  };
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
@@ -182,7 +208,9 @@ const CaseManager: FC = () => {
                           onClick={() => openedNest.toggle(c.nestName)}
                         >
                           <FolderIcon sx={{ pr: 1 }} />
-                          <Typography sx={{ flexGrow: 1, textAlign: 'left' }}>{c.nestName}/</Typography>
+                          <Typography sx={{ flexGrow: 1, textAlign: 'left' }}>
+                            {c.nestName}/ ({c.caseEntries.length})
+                          </Typography>
                           {openedNest.has(c.nestName) ? <ExpandLess /> : <ExpandMore />}
                         </Button>
                         <Button sx={{}}>
