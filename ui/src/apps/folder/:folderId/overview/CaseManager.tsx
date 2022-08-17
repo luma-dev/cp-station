@@ -25,6 +25,7 @@ import { useSet } from 'react-use';
 import { routes } from 'routes-gen';
 import { useFolderId } from '../useFolderId';
 import { useListCases } from '../useListCases';
+import CaseEditor from './CaseEditor';
 
 const createCaseQuery = routes.$.cases.$.createCase.$query;
 const createNestQuery = routes.$.cases.$.createNest.$query;
@@ -113,29 +114,6 @@ const CaseManager: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCase != null && selectedSomeCase]);
 
-  const subheader = (
-    <ListSubheader component="div" id="nested-list-subheader" sx={{ display: 'flex', px: 0 }}>
-      <Radio size="small" checked={selectedRoot} onChange={() => setSelectedNest(null)} />
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-        <Typography>{'<CASES>'}</Typography>
-      </Box>
-      <Box sx={{ mx: 1 }}>
-        {(() => {
-          if (listCases.status === 'loading' || listCases.isRefetching) {
-            return <PendingIcon />;
-          }
-          if (listCases.status === 'error') {
-            return <ReportIcon color="error" />;
-          }
-          return <CheckIcon color="success" />;
-        })()}
-      </Box>
-      <Button sx={{}}>
-        <FastForwardIcon />
-      </Button>
-    </ListSubheader>
-  );
-
   const handleCreateInputCase = () => {
     void client
       .query(createCaseQuery)({ folderSpecifier: { folderId }, caseType: 'input', parentNestId: selectedNest })
@@ -160,9 +138,99 @@ const CaseManager: FC = () => {
       });
   };
 
+  const subheader = (
+    <ListSubheader component="div" id="nested-list-subheader" sx={{ px: 0 }}>
+      <Box sx={{ display: 'flex', width: '100%', gap: 2, px: 1, pt: 1 }}>
+        <Button
+          component="div"
+          variant="dashed"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+            py: 1,
+          }}
+          onClick={handleCreateInputCase}
+        >
+          <TextSnippetIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
+          <Typography
+            sx={{
+              fontSize: 12,
+            }}
+          >
+            INPUT
+          </Typography>
+        </Button>
+        <Button
+          component="div"
+          variant="dashed"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+            py: 1,
+          }}
+          onClick={handleCreateInteractCase}
+        >
+          <ForumIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
+          <Typography
+            sx={{
+              fontSize: 12,
+            }}
+          >
+            INTERACT
+          </Typography>
+        </Button>
+        <Button
+          component="div"
+          variant="dashed"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100%',
+            py: 1,
+          }}
+          onClick={handleCreateNest}
+        >
+          <FolderIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
+          <Typography
+            sx={{
+              fontSize: 12,
+            }}
+          >
+            NEST
+          </Typography>
+        </Button>
+      </Box>
+      <Box sx={{ display: 'flex', px: 0 }}>
+        <Radio size="small" checked={selectedRoot} onChange={() => setSelectedNest(null)} />
+        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+          <Typography>{'<CASES>'}</Typography>
+        </Box>
+        <Box sx={{ mx: 1 }}>
+          {(() => {
+            if (listCases.status === 'loading' || listCases.isRefetching) {
+              return <PendingIcon />;
+            }
+            if (listCases.status === 'error') {
+              return <ReportIcon color="error" />;
+            }
+            return <CheckIcon color="success" />;
+          })()}
+        </Box>
+        <Button sx={{}}>
+          <FastForwardIcon />
+        </Button>
+      </Box>
+    </ListSubheader>
+  );
+
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
-      <Box sx={{ width: '300px', height: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex' }}>
+      <Box sx={{ width: '300px', height: '100%', overflowY: 'scroll', pb: 70, flexShrink: 0 }}>
         <List
           sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
           component="nav"
@@ -240,72 +308,8 @@ const CaseManager: FC = () => {
             });
           })()}
         </List>
-        <Box sx={{ display: 'flex', width: '100%', gap: 2, px: 1, mt: 2 }}>
-          <Button
-            component="div"
-            variant="dashed"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              height: '100%',
-              py: 1,
-            }}
-            onClick={handleCreateInputCase}
-          >
-            <TextSnippetIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
-            <Typography
-              sx={{
-                fontSize: 12,
-              }}
-            >
-              INPUT
-            </Typography>
-          </Button>
-          <Button
-            component="div"
-            variant="dashed"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              height: '100%',
-              py: 1,
-            }}
-            onClick={handleCreateInteractCase}
-          >
-            <ForumIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
-            <Typography
-              sx={{
-                fontSize: 12,
-              }}
-            >
-              INTERACT
-            </Typography>
-          </Button>
-          <Button
-            component="div"
-            variant="dashed"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              height: '100%',
-              py: 1,
-            }}
-            onClick={handleCreateNest}
-          >
-            <FolderIcon htmlColor={theme.palette.grey['600']} sx={addIconStyle} />
-            <Typography
-              sx={{
-                fontSize: 12,
-              }}
-            >
-              NEST
-            </Typography>
-          </Button>
-        </Box>
       </Box>
+      <CaseEditor />
     </Box>
   );
 };

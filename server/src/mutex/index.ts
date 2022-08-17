@@ -12,8 +12,3 @@ export const createdScopedMutex = () => {
     return cached;
   };
 };
-
-const listCasesMutexCache = createdScopedMutex();
-export const listCasesMutex = (caseId: string) => {
-  return listCasesMutexCache(caseId);
-};
