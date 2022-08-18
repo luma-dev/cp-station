@@ -41,10 +41,24 @@ const createNest = implRouter({
   }),
 });
 
+const editCase = implRouter({
+  $query: implQueryRoute({
+    paramsSchema: createCaseParamsSchema,
+    returnSchema: createCaseReturnSchema,
+    async resolve({ params, metadata }) {
+      const {
+        cases: { setCaseInput },
+      } = getContext(metadata);
+      return await setCaseInput(params);
+    },
+  }),
+});
+
 export default implRouter({
   $: {
     listCases,
     createCase,
     createNest,
+    editCase,
   },
 });

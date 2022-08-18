@@ -26,6 +26,7 @@ export type CasesContext = {
   readonly listCases: (folderSpecifier: FolderSpecifier) => Promise<CaseDataEntries>;
   readonly createCase: (params: CreateCaseParams) => Promise<CreateCaseReturn>;
   readonly createNest: (folderSpecifier: FolderSpecifier) => Promise<CreateNestReturn>;
+  readonly editCase: () => Promise<CreateNestReturn>;
 };
 
 export type FolderContext = {

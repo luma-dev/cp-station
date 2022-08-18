@@ -32,6 +32,16 @@ export const nestCaseDataSchema = z.object({
 });
 export type NestCaseData = z.infer<typeof nestCaseDataSchema>;
 
+export const caseSpecifierSchema = z.union([
+  z.object({
+    caseId: z.string(),
+  }),
+  z.object({
+    caseName: z.string(),
+  }),
+]);
+export type CaseSpecifier = z.infer<typeof caseSpecifierSchema>;
+
 export const allCaseDataSchema = z.union([inputCaseDataSchema, interactCaseDataSchema, nestCaseDataSchema]);
 export type AllCaseData = z.infer<typeof allCaseDataSchema>;
 

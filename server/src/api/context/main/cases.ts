@@ -193,9 +193,12 @@ export const createDefaultCasesContext = (workdir: string, folder: FolderContext
     });
   };
 
+  const setCaseInput = async ({ caseSpecifider }) => {};
+
   return {
     listCases,
     createCase,
     createNest,
+    setCaseInput,
   };
 };
